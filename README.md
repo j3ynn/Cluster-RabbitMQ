@@ -54,12 +54,10 @@ In questo stage viene installato il RabbitMQ Cluster Operator,
 necessario per permettere a Kubernetes di creare e gestire il cluster RabbitMQ.
 
 - Tramite `curl` scarica il manifest ufficiale dell'Operator RabbitMQ e lo salva come `cluster-operator.yml`
-- Con `sed` sostituisce ogni occorrenza del namespace `rabbitmq-system` con `rbmq-test`, il namespace con la quale lavoro
 - Applica il manifest modificato con `kubectl apply`
 
 ```groovy
 sh 'curl -L -o cluster-operator.yml https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml'
-sh "sed -i 's/rabbitmq-system/rbmq-test/g' cluster-operator.yml"
 sh './kubectl apply -f cluster-operator.yml -n rbmq-test'
 ```
 
