@@ -24,6 +24,7 @@ pipeline {
                     sh './kubectl get ns'
                     sh './kubectl apply -f cluster-operator.yml'
                      //sh 'kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml -n rbmq-test'
+                    }
                 }  
             }
     }
