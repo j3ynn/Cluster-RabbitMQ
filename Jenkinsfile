@@ -32,6 +32,23 @@ pipeline {
             }
         }
 
+        stage('create vhosts and users') {
+            steps {
+                withCredentials([
+                    string(
+                        credentialsId: 'trove_roma' ,
+                        variable: 'trove_rome'
+                    )
+                ])
+                sh '''
+                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                        rabbitmqctl add_vhost trove-roma
+                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                        rabbitmqctl add_user trove-roma "$trove_roma"
+                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                        rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
+                '''
+            }
+        }
     }
-
 }
