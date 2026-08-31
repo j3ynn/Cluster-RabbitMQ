@@ -7,7 +7,7 @@ pipeline {
 
     stages {
 
-        stage('scarica kubectl') {
+        stage('download kubectl') {
             steps {
                 sh '''
                     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -39,15 +39,16 @@ pipeline {
                         credentialsId: 'trove_roma' ,
                         variable: 'trove_rome'
                     )
-                ])
+                ]) {
                 sh '''
-                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
                         rabbitmqctl add_vhost trove-roma
-                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
                         rabbitmqctl add_user trove-roma "$trove_roma"
-                    ./kubectl exec -n trove-messaging trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
                         rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
                 '''
+                }
             }
         }
     }
