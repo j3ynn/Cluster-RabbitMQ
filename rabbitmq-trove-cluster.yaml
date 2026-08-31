@@ -2,7 +2,7 @@ apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
   name: trove-rabbitmq
-  namespace: trove-messaging
+  namespace: rbmq-test
 spec:
   replicas: 3
   image: rabbitmq:4.1-management
