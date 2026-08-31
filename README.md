@@ -4,7 +4,7 @@ Pipeline Jenkins per automatizzare il deployment di un cluster RabbitMQ su Kuber
 
 ## Obiettivo Pipeline
 
-La pipeline automatizza l'intero processo di installazione
+La pipeline automatizza l'intero processo di installazione e confugurazione
 di RabbitMQ all'interno del cluster Kubernetes.
 
 ## Cosa esegue
