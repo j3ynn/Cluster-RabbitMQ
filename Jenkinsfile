@@ -21,14 +21,14 @@ pipeline {
                     sh 'curl -L -o cluster-operator.yml https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml'
                     sh "sed -i 's/rabbitmq-system/rbmq-test/g' cluster-operator.yml"
                     sh './kubectl get pod -n rbmq-test'
-                    sh './kubectl apply -f cluster-operator.yml'
+                    sh './kubectl apply -f cluster-operator.yml -n rbmq-test'
                     //sh 'kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml -n rbmq-test'
                 }  
             }
 
         stage('deploy cluster RabbitMQ') {
             steps {
-                    sh './kubectl apply -f rabbitmq-trove-cluster.yaml'
+                    sh './kubectl apply -f rabbitmq-trove-cluster.yaml -n rbmq-test'
             }
         }
 
