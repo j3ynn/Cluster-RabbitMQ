@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+
         KUBECONFIG = credentials('kubeconfig-bellucci')
     }
 
@@ -23,8 +24,8 @@ pipeline {
                     sh './kubectl get pod -n rbmq-test'
                     sh './kubectl apply -f cluster-operator.yml -n rbmq-test'
                     //sh 'kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml -n rbmq-test'
-                }  
-            }
+            }  
+        }
 
         stage('deploy cluster RabbitMQ') {
             steps {
@@ -60,3 +61,4 @@ pipeline {
         }
     }
 }
+
