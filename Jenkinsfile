@@ -37,7 +37,7 @@ pipeline {
                 withCredentials([
                     string(
                         credentialsId: 'trove_roma' ,
-                        variable: 'trove_rome'
+                        variable: 'trove_roma'
                     )
                 ]) {
                 sh '''
