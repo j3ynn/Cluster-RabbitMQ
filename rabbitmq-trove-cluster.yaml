@@ -5,7 +5,7 @@ metadata:
   namespace: rbmq-test
 spec:
   replicas: 3
-  image: rabbitmq:4.1-management
+  image: docker.io/rabbitmq:4.1-management
 
   resources:
     requests:
