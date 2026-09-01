@@ -47,6 +47,7 @@ pipeline {
                     )
                 ]) {
                 sh '''
+                    ./kubectl get pod -n rbmq-test
                     ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
                         rabbitmqctl add_vhost trove-roma
                     ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
