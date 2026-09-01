@@ -38,7 +38,7 @@ spec:
           - name: amqp
             port: 5672
             targetPort: 5672
-            nodePort: 30672
+            nodePort: 30673
     statefulSet:
       spec:
         template:
