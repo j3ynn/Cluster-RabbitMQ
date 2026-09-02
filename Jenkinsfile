@@ -59,6 +59,23 @@ pipeline {
                 }
             }
         }
+
+        stage('check') {
+            step {
+                sh '''
+                    echo "RabbitMQ Cluster"
+                    ./kubectl get trove-rabbitmq-test -n rbmq-test
+                    echo "Pod RabbitMq"
+                    ./kubectl get pod -n rbmq-test -l app.kubernetes.io/name=trove-rabbitmq-test
+                    echo "Vhost"
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_vhosts
+                    echo "Utenti"
+                    ./kubectl ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
+                    echo "Permessi"
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-roma
+                '''
+            }
+        }
     }
 }
 
