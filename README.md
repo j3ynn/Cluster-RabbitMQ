@@ -1,4 +1,4 @@
-# Documentazione - RabbitMQ Cluster Operator
+# Documentazione - RabbitMQ Cluster
 
 Pipeline Jenkins per automatizzare il deployment di un cluster RabbitMQ su Kubernetes.
 
@@ -12,9 +12,10 @@ di RabbitMQ all'interno del cluster Kubernetes.
 Automatizza i seguenti passaggi:
 
 - Scarica `kubectl` nel workspace del build
-- Installa il Cluster Operator di RabbitMQ
 - Fa il deploy di RabbitMQ applicando il manifest custom `rabbitmq-trove-cluster.yaml`
 - Crea vhost e utenti dedicati
+
+*pipeline idempotente*
 
 ---
 
@@ -46,19 +47,6 @@ sh '''
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     chmod +x kubectl
 '''
-```
-
-## Stage - install cluster Operator
-
-In questo stage viene installato il RabbitMQ Cluster Operator,
-necessario per permettere a Kubernetes di creare e gestire il cluster RabbitMQ.
-
-- Tramite `curl` scarica il manifest ufficiale dell'Operator RabbitMQ e lo salva come `cluster-operator.yml`
-- Applica il manifest modificato con `kubectl apply`
-
-```groovy
-sh 'curl -L -o cluster-operator.yml https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml'
-sh './kubectl apply -f cluster-operator.yml -n rbmq-test'
 ```
 
 ## Stage - deploy cluster RabbitMQ
@@ -97,3 +85,25 @@ withCredentials([
     '''
 }
 ```
+
+## Stage - Check
+
+Verifica finale che mostra, in un unico output, lo stato di tutto quello che la pipeline ha creato:
+
+- Il cluster RabbitMQ (`RabbitmqCluster`)
+- I pod RabbitMQ
+- I vhost, sia di Roma che di Milano
+- Gli utenti, sia di Roma che di Milano
+- I permessi assegnati a ciascun utente sul proprio vhost
+
+
+## Note - perché non ho installato l'Operator
+
+Il `RabbitMQ Cluster Operator` è un singolo componente **condiviso da tutto il cluster Kubernetes**, non è isolato per namespace come il cluster RabbitMQ stesso.
+
+- Il manifest ufficiale dell'Operator contiene risorse cluster-scoped (CRD, ClusterRole, ClusterRoleBinding e webhook). Per questo non deve essere riapplicato o modificato con `sed`, perché potrebbe sovrascrivere risorse già utilizzate in produzione.
+- Non eseguire `kubectl delete -f cluster-operator.yml` né eliminare la CRD `rabbitmqclusters.rabbitmq.com`: questo potrebbe cancellare tutti i cluster RabbitMQ associati.
+- La pipeline non modifica mai i namespace `rabbitmq-system` e `trove-messaging`, né le risorse cluster-scoped dell'Operator.
+- Le modifiche al cluster RabbitMQ devono essere effettuate tramite il manifest completo `RabbitmqCluster`, evitando patch dirette sulle risorse generate dall'Operator.
+
+---
