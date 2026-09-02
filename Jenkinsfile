@@ -42,8 +42,8 @@ pipeline {
         stage('create vhosts and users') {
             steps {
                 withCredentials([
-                        credentialsId: 'trove_roma' , variable: 'trove_roma'
-                        credentialsId: 'trove_milano' , variable: 'trove_milano'
+                        string(credentialsId: 'trove_roma' , variable: 'trove_roma')
+                        string(credentialsId: 'trove_milano' , variable: 'trove_milano')
                 ]) {
                 sh '''
                     ./kubectl get pod -n rbmq-test
