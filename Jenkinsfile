@@ -42,7 +42,7 @@ pipeline {
         stage('create vhosts and users') {
             steps {
                 withCredentials([
-                        string(credentialsId: 'trove_roma' , variable: 'trove_roma')
+                        string(credentialsId: 'trove_roma' , variable: 'trove_roma'),
                         string(credentialsId: 'trove_milano' , variable: 'trove_milano')
                 ]) {
                 sh '''
