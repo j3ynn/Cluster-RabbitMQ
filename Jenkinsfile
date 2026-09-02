@@ -61,7 +61,7 @@ pipeline {
         }
 
         stage('check') {
-            step {
+            steps {
                 sh '''
                     echo "RabbitMQ Cluster"
                     ./kubectl get trove-rabbitmq-test -n rbmq-test
