@@ -35,7 +35,7 @@ pipeline {
 
         stage('attendi pod') {
             steps {
-                sh './kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=trove-rabbitmq -n rbmq-test --timeout=300s'
+                sh './kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=trove-rabbitmq-test -n rbmq-test --timeout=300s'
             }
         }
 
