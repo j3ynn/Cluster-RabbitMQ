@@ -49,11 +49,11 @@ pipeline {
                 ]) {
                 sh '''
                     ./kubectl get pod -n rbmq-test
-                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
                         rabbitmqctl add_vhost trove-roma
-                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
                         rabbitmqctl add_user trove-roma "$trove_roma"
-                    ./kubectl exec -n rbmq-test trove-rabbitmq-server-0 -- \
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
                         rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
                 '''
                 }
