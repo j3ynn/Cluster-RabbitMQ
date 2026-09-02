@@ -100,7 +100,7 @@ Verifica finale che mostra, in un unico output, lo stato di tutto quello che la 
 ## Note - perché non ho installato l'Operator
 
 RabbitMQ Cluster Operator è installato a livello di cluster,
-osservara le risorse RabbitmqCluster creando e gestendo automaticamente le risorse necessarie per il funzionamento di RabbitMQ.
+osservare le risorse RabbitmqCluster creando e gestendo automaticamente le risorse necessarie per il funzionamento di RabbitMQ.
 L'Operator viene installato una sola volta e può essere utilizzato per gestire cluster RabbitMQ presenti in diversi namespace.
 La sua installazione comprende anche risorse condivise a livello di cluster, come la CRD rabbitmqclusters.rabbitmq.com, ClusterRole, ClusterRoleBinding e webhook.
 Nel cluster esiste già un'installazione dell'Operator utilizzata da altri ambienti.
