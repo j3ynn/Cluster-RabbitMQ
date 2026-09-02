@@ -50,9 +50,9 @@ pipeline {
                 sh '''
                     ./kubectl get pod -n rbmq-test
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
-                        rabbitmqctl add_vhost trove-roma
+                        rabbitmqctl add_vhost trove-roma || true
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
-                        rabbitmqctl add_user trove-roma "$trove_roma"
+                        rabbitmqctl add_user trove-roma "$trove_roma" || true
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
                         rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
                 '''
@@ -64,13 +64,13 @@ pipeline {
             steps {
                 sh '''
                     echo "RabbitMQ Cluster"
-                    ./kubectl get trove-rabbitmq-test -n rbmq-test
+                    ./kubectl get rabbitmqcluster trove-rabbitmq-test -n rbmq-test
                     echo "Pod RabbitMq"
                     ./kubectl get pod -n rbmq-test -l app.kubernetes.io/name=trove-rabbitmq-test
                     echo "Vhost"
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_vhosts
                     echo "Utenti"
-                    ./kubectl ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
                     echo "Permessi"
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-roma
                 '''
