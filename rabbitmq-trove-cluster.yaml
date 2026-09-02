@@ -1,7 +1,7 @@
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
-  name: trove-rabbitmq
+  name: trove-rabbitmq-test
   namespace: rbmq-test
 spec:
   replicas: 3
