@@ -104,7 +104,7 @@ osservara le risorse RabbitmqCluster creando e gestendo automaticamente le risor
 L'Operator viene installato una sola volta e può essere utilizzato per gestire cluster RabbitMQ presenti in diversi namespace.
 La sua installazione comprende anche risorse condivise a livello di cluster, come la CRD rabbitmqclusters.rabbitmq.com, ClusterRole, ClusterRoleBinding e webhook.
 Nel cluster esiste già un'installazione dell'Operator utilizzata da altri ambienti.
-Per questo la pipeline non reinstalla né modifica l'Operator: una nuova applicazione del manifest ufficiale potrebbe modificare componenti dell'installazione esistente, ad esempio versione, immagine o webhook, con possibili conseguenze sugli altri cluster RabbitMQ.
+- Per questo la pipeline non reinstalla né modifica l'Operator: una nuova applicazione del manifest ufficiale potrebbe modificare componenti dell'installazione esistente, ad esempio versione, immagine o webhook, con possibili conseguenze sugli altri cluster RabbitMQ.
 La pipeline utilizza quindi l'Operator già installato e si limita a creare la risorsa RabbitmqCluster nel namespace di test tramite il manifest rabbitmq-trove-cluster.yaml.
 
 ---
