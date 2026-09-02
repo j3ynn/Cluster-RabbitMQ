@@ -43,8 +43,8 @@ pipeline {
             steps {
                 withCredentials([
                     string(
-                        credentialsId: 'trove_roma' ,
-                        variable: 'trove_roma'
+                        credentialsId: 'trove_roma' , variable: 'trove_roma'
+                        credentialsId: 'trove_milano' , variable: 'trove_milano'
                     )
                 ]) {
                 sh '''
@@ -55,6 +55,14 @@ pipeline {
                         rabbitmqctl add_user trove-roma "$trove_roma" || true
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
                         rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
+
+
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
+                        rabbitmqctl add_vhost trove-milano || true
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
+                        rabbitmqctl add_user trove-milano "$trove_milano" || true
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- \
+                        rabbitmqctl set_permissions -p trove-milano trove-milano ".*" ".*" ".*"
                 '''
                 }
             }
@@ -71,8 +79,10 @@ pipeline {
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_vhosts
                     echo "Utenti"
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
-                    echo "Permessi"
+                    echo "Permissions Roma"
                     ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-roma
+                    echo "Permissions Milano"
+                    ./kubectl exec -n rbmq-test trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-milano
                 '''
             }
         }
