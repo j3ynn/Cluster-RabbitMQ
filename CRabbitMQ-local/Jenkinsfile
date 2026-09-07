@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+    environment {
+
+        KUBECONFIG = credentials('kubeconfig-cluster-rabbitmq')
+    }
+
+    stages {
+
+        stage('download kubectl') {
+            steps {
+                sh '''
+                    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                    chmod +x kubectl
+                '''
+            }
+        }        
+
+        stage('install cert-manager') {
+            steps {
+                sh '''
+                    ./kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+                    ./kubectl get pods -n cert-menager
+                '''
+            }
+        }
+
+        stage('cluster operator') {
+            steps {
+                sh './kubectl apply -f cluster-operator.yml'
+            }
+        }
+
+        stage('cluser rabbitmq') {
+            steps {
+                sh '''
+                    ./kubectl create namespace cluster-rabbitmq
+                    ./kubectl apply -f rabbitmq-trove-cluster-local.yaml
+                '''
+            }
+        }
+
+        stage('create vhost and users') {
+            steps {
+                withCredentials([
+                        string(credentialsId: 'trove_roma' , variable: 'trove_roma'),
+                        string(credentialsId: 'trove_milano' , variable: 'trove_milano')
+                ]) {
+                sh '''
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl add_vhost trove-roma || true
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl add_user trove-roma "$trove_roma" || true
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl set_permissions -p trove-roma trove-roma ".*" ".*" ".*"
+
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl add_vhost trove-milano || true
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl add_user trove-milano "$trove_milano" || true
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- \
+                       rabbitmqctl set_permissions -p trove-milano trove-milano ".*" ".*" ".*"
+                '''
+                }
+            }
+        }
+
+        stage('check') {
+            steps {
+                sh '''
+                    echo "namespaces"
+                    ./kubectl get namespaces
+                    echo "utenti"
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
+                    echo "vhost"
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- rabbitmqctl list_vhosts
+                    echo "permissions roma"
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-roma
+                    echo "permissions milano"
+                    ./kubectl exec -n cluster-rabbitmq trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p trove-milano
+                '''
+            }
+        }
+    }
+}
