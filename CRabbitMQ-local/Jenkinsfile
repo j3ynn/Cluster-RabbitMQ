@@ -32,6 +32,12 @@ pipeline {
             }
         }
 
+        stage('attendi operator') {
+            steps {
+                sh './kubectl wait --for=condition=Available deployment/rabbitmq-cluster-operator -n rabbitmq-system --timeout=120s'
+            }
+        }
+
         stage('cluser rabbitmq') {
             steps {
                 sh '''
