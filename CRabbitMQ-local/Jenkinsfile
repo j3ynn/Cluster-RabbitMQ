@@ -21,14 +21,14 @@ pipeline {
             steps {
                 sh '''
                     ./kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
-                    ./kubectl get pods -n cert-menager
+                    ./kubectl get pods -n cert-manager
                 '''
             }
         }
 
         stage('cluster operator') {
             steps {
-                sh './kubectl apply -f cluster-operator.yml'
+                sh './kubectl apply -f CRabbitMQ-local/cluster-operator.yml'
             }
         }
 
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sh '''
                     ./kubectl create namespace cluster-rabbitmq
-                    ./kubectl apply -f rabbitmq-trove-cluster-local.yaml
+                    ./kubectl apply -f CRabbitMQ-local/rabbitmq-trove-cluster-local.yaml
                 '''
             }
         }
