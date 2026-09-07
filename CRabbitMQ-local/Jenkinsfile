@@ -41,6 +41,12 @@ pipeline {
             }
         }
 
+        stage('attendi pod') {
+            steps {
+                sh './kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=trove-rabbitmq-test -n cluster-rabbitmq --timeout=300s'
+            }
+        }
+
         stage('create vhost and users') {
             steps {
                 withCredentials([
