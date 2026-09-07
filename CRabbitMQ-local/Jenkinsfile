@@ -41,7 +41,7 @@ pipeline {
         stage('cluser rabbitmq') {
             steps {
                 sh '''
-                    ./kubectl create namespace cluster-rabbitmq
+                    ./kubectl create namespace cluster-rabbitmq || true
                     ./kubectl apply -f CRabbitMQ-local/rabbitmq-trove-cluster-local.yaml
                 '''
             }
