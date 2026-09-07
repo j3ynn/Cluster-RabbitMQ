@@ -44,11 +44,6 @@ spec:
       spec:
         template:
           spec:
-            containers:
-              - name: rabbitmq
-                startupProbe:
-                  periodSeconds: 10
-                  failureThreshold: 30
             affinity:
               podAntiAffinity:
                 preferredDuringSchedulingIgnoredDuringExecution:
