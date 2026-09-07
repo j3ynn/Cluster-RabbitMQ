@@ -29,6 +29,7 @@ spec:
       cluster_formation.k8s.address_type = hostname
       cluster_formation.node_cleanup.interval = 30
       cluster_formation.node_cleanup.only_log_warning = true
+      cluster_formation.target_cluster_size_hint = 3
 
   override:
     service:
