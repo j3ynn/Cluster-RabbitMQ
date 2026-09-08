@@ -79,7 +79,7 @@ pipeline {
         stage('aspetta pod') {
             steps {
                 sh """
-                    ./kubectl \
+                    ./kubectl wait \
                     --for=condition=AllReplicasReady=True \
                     rabbitmqcluster/trove-rabbitmq-test \
                     -n ${params.CLUSTERNAME} \
