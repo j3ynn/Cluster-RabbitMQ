@@ -120,5 +120,22 @@ pipeline {
                 }
             }
         }
+
+        stage('check') {
+            steps {
+                sh """
+                    echo "namespace"
+                    ./kubectl get namespaces
+                    echo "vhost"
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-0 -- rabbitmqctl list_vhosts
+                    echo "users"
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-0 -- rabbitmqctl list_users
+                    echo "permissions roma"
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p ${params.VHOST_NAME_ROMA}
+                    echo "permissions milano"
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-0 -- rabbitmqctl list_permissions -p ${params.VHOST_NAME_MILANO}
+                """
+            }
+        }
     }
 }
