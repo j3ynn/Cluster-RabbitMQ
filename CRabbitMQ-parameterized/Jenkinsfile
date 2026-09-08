@@ -81,8 +81,8 @@ pipeline {
                 sh """
                     ./kubectl wait \
                     --for=condition=AllReplicasReady=True \
-                    rabbitmqcluster/trove-rabbitmq-test \
-                    -n ${params.CLUSTERNAME} \
+                    rabbitmqcluster/${params.CLUSTERNAME} \
+                    -n ${params.NAMESPACE} \
                     --timeout=300s
                 """
             }
