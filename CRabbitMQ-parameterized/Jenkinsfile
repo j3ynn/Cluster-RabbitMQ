@@ -45,13 +45,13 @@ pipeline {
 
         string(
             name: 'CREDENTIAL_ID_ROMA',
-            defaultValue: 'trove-roma',
+            defaultValue: 'trove_roma',
             description: 'credential id roma'
         )
 
         string(
             name: 'CREDENTIAL_ID_MILANO',
-            defaultValue: 'trove-milano',
+            defaultValue: 'trove_milano',
             description: 'credential id milano'
         )
     }
