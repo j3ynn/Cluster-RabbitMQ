@@ -38,7 +38,7 @@ pipeline {
             }
         }
 
-        stage('cluser rabbitmq') {
+        stage('deploy cluser rabbitmq') {
             steps {
                 sh '''
                     ./kubectl create namespace cluster-rabbitmq || true
