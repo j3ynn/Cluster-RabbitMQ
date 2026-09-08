@@ -1,0 +1,124 @@
+pipeline {
+    agent any
+
+    environment {
+
+        KUBECONFIG = credentials('kubeconfig-cluster-rabbitmq')
+    }
+
+    parameters {
+        string(
+            name: 'NAMESPACE',
+            defaultValue: 'cluster-rabbitmq',
+            description: 'namespace dedicato rabbitmq'
+        )
+
+        string(
+            name: 'CLUSTERNAME',
+            defaultValue: 'trove-rabbitmq-test',
+            description: 'nome del cluster rabbitmq'
+        )
+
+        string(
+            name: 'VHOST_NAME_ROMA',
+            defaultValue: 'trove-roma',
+            description: 'nome vhost roma'
+        )
+
+        string(
+            name: 'VHOST_NAME_MILANO',
+            defaultValue: 'trove-milano',
+            description: 'nome vhost milano'
+        )
+
+        string(
+            name: 'USER_NAME_ROMA',
+            defaultValue: 'trove-roma',
+            description: 'nome user roma'
+        )
+
+        string(
+            name: 'USER_NAME_MILANO',
+            defaultValue: 'trove-milano',
+            description: 'nome user milano'
+        )
+
+        string(
+            name: 'CREDENTIAL_ID_ROMA',
+            defaultValue: 'trove-roma',
+            description: 'credential id roma'
+        )
+
+        string(
+            name: 'CREDENTIAL_ID_MILANO',
+            defaultValue: 'trove-milano',
+            description: 'credential id milano'
+        )
+    }
+
+    stages {
+
+        stage('download kubectl') {
+            steps {
+                sh '''
+                    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                    chmod +x kubectl
+                '''
+            }
+        }
+
+        stage('deploy cluster rabbitmq') {
+            steps {
+                sh """
+                    ./kubectl create namespace ${params.NAMESPACE} || true
+                    ./kubectl apply -f CRabbitMQ-parameterized/rabbitmq-trove-cluster-local.yaml
+                """
+            }
+        }
+
+        stage('aspetta pod') {
+            steps {
+                sh """
+                    ./kubectl \
+                    --for=condition=AllReplicasReady=True \
+                    rabbitmqcluster/trove-rabbitmq-test \
+                    -n ${params.CLUSTERNAME} \
+                    --timeout=300s
+                """
+            }
+        }
+
+        stage('create vhost') {
+            steps {
+                sh """
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl add_vhost ${params.VHOST_NAME_ROMA} || true
+
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl add_vhost ${params.VHOST_NAME_MILANO} || true
+                """
+            }
+        }
+
+        stage('create users') {
+            steps {
+                withCredentials([
+                        string(credentialsId: params.CREDENTIAL_ID_ROMA , variable: 'trove_roma'),
+                        string(credentialsId: params.CREDENTIAL_ID_MILANO , variable: 'trove_milano')
+                ]) {
+                sh """
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl add_user ${params.USER_NAME_ROMA} "$trove_roma" || true
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl set_permissions -p ${params.VHOST_NAME_ROMA} ${params.USER_NAME_ROMA} ".*" ".*" ".*"
+
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl add_user ${params.USER_NAME_MILANO} "$trove_milano" || true
+                    ./kubectl exec -n ${params.NAMESPACE} trove-rabbitmq-test-server-00 -- \
+                    rabbitmqctl set_permissions -p ${params.VHOST_NAME_MILANO} ${params.USER_NAME_MILANO} ".*" ".*" ".*"
+                """
+                }
+            }
+        }
+    }
+}
