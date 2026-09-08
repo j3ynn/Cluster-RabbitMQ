@@ -60,7 +60,8 @@ Questo stage installa il tool cert-menager che automatizza la gestione dei certi
 
 Applica il manifest precedentemente scaricato con la giusta versione, per installare il cluster Operator
 
-```kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.16.1/cluster-operator.yml
+```
+kubectl apply -f https://github.com/rabbitmq/cluster-operator/releases/download/v2.16.1/cluster-operator.yml
 ```
 
 ## Stage - deploy cluster RabbitMQ
