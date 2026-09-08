@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sh '''
                     ./kubectl wait \
-                    --for=jsonpath='{.status.readyReplicas}'=3 \
+                    --for=condition=AllReplicasReady=True \
                     rabbitmqcluster/trove-rabbitmq-test \
                     -n cluster-rabbitmq \
                     --timeout=300s
